@@ -94,4 +94,9 @@ def scrub_index(sentence_value):
 
 check_command()
 
-    
+"""
+Things to work on:
+Add update to change value of name
+Add ability to delete item alongside with description
+
+"""
