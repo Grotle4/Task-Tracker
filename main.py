@@ -1,4 +1,6 @@
 
+tasks = []
+
 def check_command():
     while True:
         user = input()
@@ -7,7 +9,7 @@ def check_command():
         identifer = ""
         if command != "stop":
             try:
-                new_identifier = check_null(command, identifer, words)
+                new_identifier = check_null(command, words)
                 check_type(command, new_identifier, words)
                 print(type(identifer)) 
             except IndexError:
@@ -18,7 +20,7 @@ def check_command():
 
 
 def list_index(tasks):
-    for index, t in enumerate(tasks):
+    for index, t in enumerate(tasks, start=1):
         print(f"{index}: {t}")
 
 
@@ -27,9 +29,10 @@ def check_type(user_command, user_identifier, user_words):
     match user_command:
                     case "add":
                         print(user_identifier)
-                        tasks.append(user_identifier)
-                        print("added")
-                        print(tasks)
+                        if user_identifier != None:
+                            tasks.append(user_identifier)
+                            print("added")
+                            print(tasks)
                     case "update":
                         print("updated")
                     case "list":
@@ -47,14 +50,13 @@ def check_type(user_command, user_identifier, user_words):
                             list_index(tasks)
 
 
-
 def check_null(user_command, user_words):
     if user_command != "list" and len(user_words) > 1:
         print("passed")
         return user_words[1]
     return None
 
-tasks = []
+
 check_command()
 
     
