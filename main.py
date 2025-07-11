@@ -2,7 +2,7 @@
 #Dictionary that will place hold the task implemented, will have placeholder variable for description and ID
 task = {
     "task_ID": None,
-    "task name": None, # type: ignore 
+    "task_name": None, # type: ignore 
     "task_desc": None, # type: ignore
     }
  
@@ -16,20 +16,24 @@ task_list = []
 while True:
     user = input("Enter a command: " )
     words = user.split()
-    print(words)
+    list_id = words[1]
     listed_task = words[1:]
+    no_id = words[2:]
     rejoined_sent = " ".join(listed_task)
+    rejoined_no_id = " ".join(no_id)
     iteration += 1
     match words[0]:
         case "add":
-            print(rejoined_sent)
-            task["task name"] = rejoined_sent
+            task["task_name"] = rejoined_sent
             task["task_ID"] = iteration + 1
             task_list.append(task)
-            print("Added Task!")
-            print(task_list)
+            print(f"Added Task! Task {task["task_ID"]} has been set to '{task['task_name']}'.")
         case "update":
-            print("update")
+            for item in task_list:
+                if item["task_ID"] == int(list_id):
+                    item["task_name"] = rejoined_no_id
+                    print(f"Updated Task! Task {item["task_ID"]} has been set to '{item['task_name']}'.")
+                    break
         case "delete":
             print("delete")
         case "todo":
