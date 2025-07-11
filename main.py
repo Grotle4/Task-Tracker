@@ -9,24 +9,30 @@ tasks = []
 while True:
     user = input("Enter a command: " )
     words = user.split()
-    match words[0]:
-        case "add":
-            print("add")
-        case "update":
-            print("update")
-        case "delete":
-            print("delete")
-        case "todo":
-            print("todo")
-        case "done":
-            print("done")
-        case "list":
-            print("list")
-        case "list" if "todo" in words[1:]:
-            print("todo list")
-        case "list" if "in-progress" in words[1:]:
-            print("in prog list")
-
+    try:
+        match words[0]:
+            case "add":
+                print("add")
+            case "update":
+                print("update")
+            case "delete":
+                print("delete")
+            case "todo":
+                print("todo")
+            case "done":
+                print("done")
+            case _ if "list todo" in user:
+                print("todo list")
+            case _ if "list in-progress" in user:
+                print("in prog list")
+            case "list":
+                print("list")
+            case "stop":
+                break
+            case _:
+                print("not valid!")
+    except:
+        print("not a valid command!")
 
 
 
