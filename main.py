@@ -35,6 +35,12 @@ while True:
                     print(f"Updated Task! Task {item["task_ID"]} has been set to '{item['task_name']}'.")
                     break
         case "delete":
+            for item in task_list:
+                if item["task_ID"] == int(list_id):
+                    task_list.remove(item)
+                    print(f"Deleted Task! Task {item["task_ID"]}: '{item["task_name"]}' has been removed.")
+                    print(task_list)
+                    break
             print("delete")
         case "todo":
             print("todo")
