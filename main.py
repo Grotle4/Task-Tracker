@@ -44,12 +44,12 @@ while True:
         no_id = words[2:]
         rejoined_sent = " ".join(listed_task)
         rejoined_no_id = " ".join(no_id)
-    iteration += 1
+    iteration += 1 #FIX THIS, iterates weirdly if add isnt run for a few steps
 
     match command:
         case "add":
             task["task_name"] = rejoined_sent
-            task["task_ID"] = iteration + 1
+            task["task_ID"] = iteration + 1 #FIX THIS, iterates weirdly
             task["task_status"] = "Not Done"
             task_list.append(task.copy())
             print(f"Added Task! Task {task["task_ID"]} has been set to '{task['task_name']}'.")
