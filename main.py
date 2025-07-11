@@ -8,10 +8,21 @@ task = {
     }
  
 no_id_terms = ["list", "list todo", "list in progress", ] #Terms that don't need an integer ID
-#Iteration to assign ID to the list
-iteration = -1
+
+known_commands = {"add", "update", "delete", "list", "list done", "list todo",
+"mark done", "mark todo", "in progress", "stop"}
+
+iteration = -1#Iteration to assign ID to the list
 #List that stores the tasks
 task_list = [] 
+
+def extract_command(user_input: str, known_commands: set):
+    words = user_input.lower().split()
+    if len(words) >= 2:
+        two_word_command = f"{words[0]} {words[1]}"
+        if two_word_command in known_commands:
+            return two_word_command, words[2:]
+    return words[0], words[1:]
 
 
 def normalize_string(user_input):
@@ -22,7 +33,11 @@ def normalize_string(user_input):
 while True:
     user_prompt = input("Enter a command: " )
     user = normalize_string(user_prompt)
+    user = user.lower()
     words = user.split()
+    command, rest_words = extract_command(user, known_commands)
+    print(command)
+    print(rest_words)                   
     if user not in no_id_terms:
         list_id = words[1]
         listed_task = words[1:]
@@ -30,14 +45,14 @@ while True:
         rejoined_sent = " ".join(listed_task)
         rejoined_no_id = " ".join(no_id)
     iteration += 1
-    match words[0]:
+
+    match command:
         case "add":
             task["task_name"] = rejoined_sent
             task["task_ID"] = iteration + 1
             task["task_status"] = "Not Done"
             task_list.append(task.copy())
             print(f"Added Task! Task {task["task_ID"]} has been set to '{task['task_name']}'.")
-            print(task_list)
         case "update":
             for item in task_list:
                 if item["task_ID"] == int(list_id):
@@ -53,32 +68,38 @@ while True:
                     for item_sort in task_list:
                         item_sort["task_ID"] = new_order
                         new_order += 1
-                        print(task_list)
-        case "todo":
+        case "mark todo":
+            two_char_id = words[2]
             for item in task_list:
-                if item["task_ID"] == int(list_id):
+                if item["task_ID"] == int(two_char_id):
                     item["task_status"] = "To Do"
                     print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to To Do.")
-        case "done":
+        case "mark done":
+            two_char_id = words[2]
             for item in task_list:
-                if item["task_ID"] == int(list_id):
+                if item["task_ID"] == int(two_char_id):
                     item["task_status"] = "Done"
                     print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to Done.")
-        case _ if "in progress" in user:
-            print("THIS WORKS")
-            in_prog_id = words[2]
+        case "list todo":
+            print("list todoned")
             for item in task_list:
-                if item["task_ID"] == int(in_prog_id):
-                    item["task_status"] = "In progress"
-                    print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to In progress.")
-        case _ if "list todo" in user:
-            if item["task_status"] == "To Do":
-                    print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}")
-        case _ if "list in progress" in user:
-            print("in prog list")
+                if item["task_status"] == "To Do":
+                        print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}") #add exception if empty
+        case "list in progress": 
+            for item in task_list:
+                if item["task_status"] == "In Progress":
+                        print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}") #add exception if empty
         case "list":
+            print("listed")
             for item in task_list:
                 print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}")
+        case "in progress":
+            print("THIS WORKS")
+            two_char_id = words[2]
+            for item in task_list:
+                if item["task_ID"] == int(two_char_id):
+                    item["task_status"] = "In Progress"
+                    print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to In progress.") 
         case "stop":
             break
         case _:
