@@ -26,8 +26,9 @@ while True:
         case "add":
             task["task_name"] = rejoined_sent
             task["task_ID"] = iteration + 1
-            task_list.append(task)
+            task_list.append(task.copy())
             print(f"Added Task! Task {task["task_ID"]} has been set to '{task['task_name']}'.")
+            print(task_list)
         case "update":
             for item in task_list:
                 if item["task_ID"] == int(list_id):
@@ -39,9 +40,11 @@ while True:
                 if item["task_ID"] == int(list_id):
                     task_list.remove(item)
                     print(f"Deleted Task! Task {item["task_ID"]}: '{item["task_name"]}' has been removed.")
-                    print(task_list)
-                    break
-            print("delete")
+                    new_order = 1
+                    for item_sort in task_list:
+                        item_sort["task_ID"] = new_order
+                        new_order += 1
+                        print(task_list)
         case "todo":
             print("todo")
         case "done":
