@@ -7,7 +7,7 @@ task = {
     "task_status": None # type: ignore
     }
  
- no_id_terms = ["list", "in progress", "list todo", "list in progress", ]
+no_id_terms = ["list", "list todo", "list in progress", ] #Terms that don't need an integer ID
 #Iteration to assign ID to the list
 iteration = -1
 #List that stores the tasks
@@ -23,7 +23,7 @@ while True:
     user_prompt = input("Enter a command: " )
     user = normalize_string(user_prompt)
     words = user.split()
-    if user != "list":
+    if user not in no_id_terms:
         list_id = words[1]
         listed_task = words[1:]
         no_id = words[2:]
@@ -64,16 +64,17 @@ while True:
                 if item["task_ID"] == int(list_id):
                     item["task_status"] = "Done"
                     print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to Done.")
-        case _ if ' ' or '-' in "in progress" in user:
+        case _ if "in progress" in user:
             print("THIS WORKS")
+            in_prog_id = words[2]
             for item in task_list:
-                if item["task_ID"] == int(list_id):
+                if item["task_ID"] == int(in_prog_id):
                     item["task_status"] = "In progress"
-                    print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to Done.")
+                    print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to In progress.")
         case _ if "list todo" in user:
             if item["task_status"] == "To Do":
                     print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}")
-        case _ if "list in-progress" in user:
+        case _ if "list in progress" in user:
             print("in prog list")
         case "list":
             for item in task_list:
