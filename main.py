@@ -1,23 +1,33 @@
+import json
+from datetime import datetime
+
+def check_time():
+    current_datetime = datetime.now()
+    formatted_datetime = current_datetime.strftime("%b-%d-%Y-%H:%M:%S")
+    return formatted_datetime
+
 
 #Dictionary that will place hold the task implemented, will have placeholder variable for description and ID
 task = {
-    "task_ID": None,
-    "task_name": None, # type: ignore 
-    "task_desc": None, # type: ignore
-    "task_status": None # type: ignore
+    "id": None,
+    "name": None, # type: ignore 
+    "description": None, # type: ignore
+    "status": None, # type: ignore
+    "createdAt": None, #type: ignore
+    "updatedAt": None #type: ignore
     }
  
 #Terms that don't need an integer ID
 no_id_terms = ["list", "list todo", "list in progress", ] 
 
-known_commands = {"add", "update", "delete", "list", "list done", "list todo",
-"mark done", "mark todo", "in progress", "stop"}
+known_commands = {"add", "update", "delete", "list", "list done", "list todo", "list in progress",
+"mark done", "mark todo", "mark in progress", "stop"}
 
 #Iteration to assign ID to the list
 iteration = -1
 
 #List that stores the tasks
-task_list = [] 
+task_list = []
 
 #takes user input and divides into command and task
 def extract_command(user_input: str, known_commands: set):
@@ -26,6 +36,11 @@ def extract_command(user_input: str, known_commands: set):
         two_word_command = f"{words[0]} {words[1]}"
         if two_word_command in known_commands:
             return two_word_command, words[2:]
+    if len(words) >= 3:
+        print("AHHHHHH")
+        three_word_command = f"{words[0]} {words[1]} {words[2]}"
+        if three_word_command in known_commands:
+            return three_word_command, words[3:]
     return words[0], words[1:]
 
 #resets iteration value if task other than add is used
@@ -46,8 +61,7 @@ while True:
     user = user.lower()
     words = user.split()
     command, rest_words = extract_command(user, known_commands)
-    print(command)
-    print(rest_words)                   
+    print(command)               
     if user not in no_id_terms:
         list_id = words[1]
         listed_task = words[1:]
@@ -58,68 +72,97 @@ while True:
 
     match command:
         case "add":
-            task["task_name"] = rejoined_sent
-            task["task_ID"] = iteration + 1 #FIX THIS, iterates weirdly
-            task["task_status"] = "Not Done"
+            task_time = check_time()
+            task["name"] = rejoined_sent
+            task["id"] = iteration + 1 #FIX THIS, iterates weirdly
+            task["status"] = "Not Done"
+            task["createdAt"] = task_time
             task_list.append(task.copy())
-            print(f"Added Task! Task {task["task_ID"]} has been set to '{task['task_name']}'.")
+            print(f"Added Task! Task {task["id"]} has been set to '{task['name']}'.")
+            print(task)
         case "update":
+            task_time = check_time()
             for item in task_list:
-                if item["task_ID"] == int(list_id):
-                    item["task_name"] = rejoined_no_id
-                    print(f"Updated Task! Task {item["task_ID"]} has been set to '{item['task_name']}'.")
+                if item["id"] == int(list_id):
+                    item["name"] = rejoined_no_id
+                    task["updatedAt"] = task_time
+                    print(f"Updated Task! Task {item["id"]} has been set to '{item['name']}'.")
                     iteration = reset_iteration(iteration,task_list)
+                    print(task)
                     break
         case "delete":
             for item in task_list:
-                if item["task_ID"] == int(list_id):
+                if item["id"] == int(list_id):
                     task_list.remove(item)
-                    print(f"Deleted Task! Task {item["task_ID"]}: '{item["task_name"]}' has been removed.")
+                    print(f"Deleted Task! Task {item["id"]}: '{item["name"]}' has been removed.")
                     new_order = 1
                     for item_sort in task_list:
-                        item_sort["task_ID"] = new_order
+                        item_sort["id"] = new_order
                         new_order += 1
             iteration = reset_iteration(iteration,task_list)
         case "mark todo":
             two_char_id = words[2]
             for item in task_list:
-                if item["task_ID"] == int(two_char_id):
-                    item["task_status"] = "To Do"
-                    print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to To Do.")
+                if item["id"] == int(two_char_id):
+                    item["status"] = "To Do"
+                    print(f"Updated Task! Task {item["task_id"]}: '{item["task_name"]}' has been set to To Do.")
             iteration = reset_iteration(iteration,task_list)
         case "mark done":
             two_char_id = words[2]
             for item in task_list:
-                if item["task_ID"] == int(two_char_id):
-                    item["task_status"] = "Done"
-                    print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to Done.")
+                if item["id"] == int(two_char_id):
+                    item["status"] = "Done"
+                    print(f"Updated Task! Task {item["id"]}: '{item["name"]}' has been set to Done.")
             iteration = reset_iteration(iteration,task_list)
         case "list todo":
             print("list todoned")
+            is_occupied = False
             for item in task_list:
-                if item["task_status"] == "To Do":
-                        print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}") #add exception if empty
+                if item["status"] == "To Do":
+                        print(f"{item["id"]}: {item["name"]}        Status: {item["status"]}")
+            if is_occupied == False:
+                print("No Tasks set to To Do.")
             iteration = reset_iteration(iteration,task_list)
         case "list in progress": 
+            is_occupied = False
             for item in task_list:
-                if item["task_status"] == "In Progress":
-                        print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}") #add exception if empty
-            iteration = reset_iteration()
+                if item["status"] == "In Progress":
+                        print(f"{item["id"]}: {item["name"]}        Status: {item["status"]}") 
+                        is_occupied = True
+            if is_occupied == False:
+                print("No Tasks set to In Progress.")
+            iteration = reset_iteration(iteration, task_list)
+        case "list done": 
+            is_occupied = False
+            for item in task_list:
+                if item["status"] == "Done":
+                        print(f"{item["id"]}: {item["name"]}        Status: {item["status"]}") 
+                        is_occupied = True
+            if is_occupied == False:
+                print("No Tasks set to Done.")
+            iteration = reset_iteration(iteration, task_list)
         case "list":
             print("listed")
+            is_occupied = False
             for item in task_list:
-                print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}")
+                print(f"{item["id"]}: {item["name"]}        Status: {item["status"]}")
+                is_occupied = True
+            if is_occupied == False:
+                print("No Tasks set.")
             iteration = reset_iteration(iteration,task_list)
-        case "in progress":
-            print("THIS WORKS")
-            two_char_id = words[2]
+        case "mark in progress":
+            is_occupied = False
+            three_char_id = words[3]
             for item in task_list:
-                if item["task_ID"] == int(two_char_id):
-                    item["task_status"] = "In Progress"
-                    print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to In progress.") 
+                if item["id"] == int(three_char_id):
+                    item["status"] = "In Progress"
+                    is_occupied = True
+                    print(f"Updated Task! Task {item["id"]}: '{item["name"]}' has been set to In progress.") 
             iteration = reset_iteration(iteration,task_list)
         case "stop":
             break
+        case "export":
+            json_string = json.dumps(task_list, indent=4)
         case _:
             print("not valid!")
             iteration = reset_iteration(iteration,task_list)
