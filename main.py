@@ -18,7 +18,7 @@ task = {
     }
  
 #Terms that don't need an integer ID
-no_id_terms = ["list", "list todo", "list in progress", ] 
+no_id_terms = ["list", "list todo", "list in progress", "export", "stop" ] 
 
 known_commands = {"add", "update", "delete", "list", "list done", "list todo", "list in progress",
 "mark done", "mark todo", "mark in progress", "stop"}
@@ -105,7 +105,7 @@ while True:
             for item in task_list:
                 if item["id"] == int(two_char_id):
                     item["status"] = "To Do"
-                    print(f"Updated Task! Task {item["task_id"]}: '{item["task_name"]}' has been set to To Do.")
+                    print(f"Updated Task! Task {item["id"]}: '{item["name"]}' has been set to To Do.")
             iteration = reset_iteration(iteration,task_list)
         case "mark done":
             two_char_id = words[2]
@@ -162,7 +162,13 @@ while True:
         case "stop":
             break
         case "export":
-            json_string = json.dumps(task_list, indent=4)
+            filename = "export.json"
+            try:
+                with open(filename, "w") as f:
+                    json.dump(task_list, f, indent=4)
+                print(f"JSON data succesfully written to {filename}")
+            except IOError as e:
+                print(f"There was an error exporting to file: {e}")
         case _:
             print("not valid!")
             iteration = reset_iteration(iteration,task_list)
