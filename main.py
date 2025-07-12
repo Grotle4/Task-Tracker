@@ -7,15 +7,19 @@ task = {
     "task_status": None # type: ignore
     }
  
-no_id_terms = ["list", "list todo", "list in progress", ] #Terms that don't need an integer ID
+#Terms that don't need an integer ID
+no_id_terms = ["list", "list todo", "list in progress", ] 
 
 known_commands = {"add", "update", "delete", "list", "list done", "list todo",
 "mark done", "mark todo", "in progress", "stop"}
 
-iteration = -1#Iteration to assign ID to the list
+#Iteration to assign ID to the list
+iteration = -1
+
 #List that stores the tasks
 task_list = [] 
 
+#takes user input and divides into command and task
 def extract_command(user_input: str, known_commands: set):
     words = user_input.lower().split()
     if len(words) >= 2:
@@ -24,7 +28,13 @@ def extract_command(user_input: str, known_commands: set):
             return two_word_command, words[2:]
     return words[0], words[1:]
 
+#resets iteration value if task other than add is used
+def reset_iteration(iteration, tasklist):
+ iteration = len(tasklist) - 1
+ return iteration
 
+
+#removes - incase of user input
 def normalize_string(user_input):
     normalized_string = user_input.replace("-", " ")
     return normalized_string
@@ -58,6 +68,7 @@ while True:
                 if item["task_ID"] == int(list_id):
                     item["task_name"] = rejoined_no_id
                     print(f"Updated Task! Task {item["task_ID"]} has been set to '{item['task_name']}'.")
+                    iteration = reset_iteration(iteration,task_list)
                     break
         case "delete":
             for item in task_list:
@@ -68,31 +79,37 @@ while True:
                     for item_sort in task_list:
                         item_sort["task_ID"] = new_order
                         new_order += 1
+            iteration = reset_iteration(iteration,task_list)
         case "mark todo":
             two_char_id = words[2]
             for item in task_list:
                 if item["task_ID"] == int(two_char_id):
                     item["task_status"] = "To Do"
                     print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to To Do.")
+            iteration = reset_iteration(iteration,task_list)
         case "mark done":
             two_char_id = words[2]
             for item in task_list:
                 if item["task_ID"] == int(two_char_id):
                     item["task_status"] = "Done"
                     print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to Done.")
+            iteration = reset_iteration(iteration,task_list)
         case "list todo":
             print("list todoned")
             for item in task_list:
                 if item["task_status"] == "To Do":
                         print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}") #add exception if empty
+            iteration = reset_iteration(iteration,task_list)
         case "list in progress": 
             for item in task_list:
                 if item["task_status"] == "In Progress":
                         print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}") #add exception if empty
+            iteration = reset_iteration()
         case "list":
             print("listed")
             for item in task_list:
                 print(f"{item["task_ID"]}: {item["task_name"]}        Status: {item["task_status"]}")
+            iteration = reset_iteration(iteration,task_list)
         case "in progress":
             print("THIS WORKS")
             two_char_id = words[2]
@@ -100,11 +117,12 @@ while True:
                 if item["task_ID"] == int(two_char_id):
                     item["task_status"] = "In Progress"
                     print(f"Updated Task! Task {item["task_ID"]}: '{item["task_name"]}' has been set to In progress.") 
+            iteration = reset_iteration(iteration,task_list)
         case "stop":
             break
         case _:
             print("not valid!")
-
+            iteration = reset_iteration(iteration,task_list)
 
 
 
