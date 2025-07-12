@@ -111,6 +111,16 @@ while True:
                             item_sort["id"] = new_order
                             new_order += 1
                 iteration = reset_iteration(iteration,task_list)
+        case "description":
+            if not task_list:
+                print("No Tasks added, please add a task.")
+            else:
+                for item in task_list:
+                    if item["id"] == int(list_id):
+                        item["description"] = rejoined_no_id #Adjusting Values to replace in list
+                        print(f"Added Description! Task {item["id"]} has a description of:'{item['description']}'.")
+                        iteration = reset_iteration(iteration,task_list)
+                        break
         case "mark todo":
             if not task_list:
                 print("No Tasks added, please add a task.")
@@ -159,7 +169,7 @@ while True:
                 is_occupied = False
                 for item in task_list:
                     if item["status"] == "To Do": #Viewing All items with status "To Do"
-                            print(f"{item["id"]}: {item["name"]}        Status: {item["status"]}")
+                            print(f"{item["id"]}: {item["name"]}       Description:{item["description"]}        Status: {item["status"]}")
                 if is_occupied == False:
                     print("No Tasks set to To Do.")
                 iteration = reset_iteration(iteration,task_list)
@@ -170,7 +180,7 @@ while True:
                 is_occupied = False
                 for item in task_list:
                     if item["status"] == "In Progress": #Viewing all items with status "In Progress"
-                            print(f"{item["id"]}: {item["name"]}        Status: {item["status"]}") 
+                            print(f"{item["id"]}: {item["name"]}       Description:{item["description"]}        Status: {item["status"]}") 
                             is_occupied = True
                 if is_occupied == False:
                     print("No Tasks set to In Progress.")
@@ -182,7 +192,7 @@ while True:
                 is_occupied = False
                 for item in task_list:
                     if item["status"] == "Done": #Viewing all items with status "Done"
-                            print(f"{item["id"]}: {item["name"]}        Status: {item["status"]}") 
+                            print(f"{item["id"]}: {item["name"]}       Description:{item["description"]}        Status: {item["status"]}")
                             is_occupied = True
                 if is_occupied == False:
                     print("No Tasks set to Done.")
@@ -190,7 +200,7 @@ while True:
         case "list":
             is_occupied = False
             for item in task_list:
-                print(f"{item["id"]}: {item["name"]}        Status: {item["status"]}") #Viewing all items
+                print(f"{item["id"]}: {item["name"]}       Description:{item["description"]}        Status: {item["status"]}") #Viewing all items
                 is_occupied = True 
             if is_occupied == False:
                 print("No Tasks added, please add a task.")
